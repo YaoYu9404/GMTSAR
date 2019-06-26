@@ -1,0 +1,206 @@
+Instructions from http://gmt.soest.hawaii.edu/projects/gmt5sar/wiki and David’s crush course
+
+1.	Make two directories
+user/local/orbits
+user/local/GMTSAR
+
+2.	Download this orbit file:
+http://topex.ucsd.edu/gmtsar/tar/ORBITS.tar
+and it appears in my Downloads directory
+and unpack in directory /usr/local/orbits by:
+cd /usr/local/orbits
+tar -xvf ~yayu/Downloads/ORBITS.tar
+
+3.	Download GMTSAR branch 5.6
+cd /usr/local
+svn checkout svn://gmtserver.soest.hawaii.edu/GMTSAR/branches/5.6 GMTSAR
+
+4.	Make and install GMTSAR
+cd /usr/local/GMTSAR
+./configure --with-orbits-dir=/usr/local/orbits
+autoconf
+make
+make install
+
+rehash
+
+make sure everything is fine by trying:
+escarp
+SAT_baseline
+P2p_ALOS.csh
+
+
+
+An InSAR test:
+1.	Download test_GMTSAR.tar from http://topex.ucsd.edu/gmtsar/downloads/ (choose: script to test all cases below)
+2.	Create directory insar on desktop
+cd ~yayu/Desktop
+mkdir insar
+3.	unpack in directory ~yayu/Deskto/insar by:
+cd insar
+tar -xvf ~yayu/Downloads/test_GMTSAR.tar
+4.	have a look at the files in insar:
+ls -l
+more filelist
+5.	m get_unpack_one.com
+6.	unpack only one set of data:
+get unpack_one.com S1A_SLC_TOPS_LA
+7.	cd S1A_SLC_TOPS_LA
+look at the files inside this folder: ls
+README.txt	README_prep.txt	config.s1a.txt	raw		topo
+In topo, there is a file dem.grd that covers the area of the SAR images, use grdinfo dem.topo to see its information.
+In raw, there are two .SAFE directories and two .EOF files
+The README_prep.txt tell you some pre information.
+The README.txt file tells you how to run the program.
+config.s1a.txt has all the custom processing parameters.
+
+8.	Copy the commands in README.txt, but to keep the work background and print them in the log file
+
+p2p_S1_TOPS_Frame.csh S1A_IW_SLC__1SSV_20150526T014935_20150526T015002_006086_007E23_679A.SAFE S1A_OPER_AUX_POEORB_OPOD_20150615T155109_V20150525T225944_20150527T005944.EOF S1A_IW_SLC__1SDV_20150607T014936_20150607T015003_006261_00832E_3626.SAFE S1A_OPER_AUX_POEORB_OPOD_20150627T155155_V20150606T225944_20150608T005944.EOF config.s1a.txt vv 1 >& log&
+
+9.	Wait for the results: it can be like one hour. To display the processor activity:
+top -o cpu
+The results are in the merge directory, *.kml or *.png
+
+
+An actual process:
+1.	Download data and put the .SAFE and .EOF files in the raw directory (read David’s crash note).
+2.	To make .grd file, use make_dem.csh
+
+e.g.
+make_dem.csh 77.5 86 -71.2 -68.4 3
+and the we just need the file dem.grd, so delete all others.
+
+To desample the dem.grd file:
+grdsample dem.grd -I0.001/0.0005 -Gtem.grd
+
+To merge two .grd files into one:
+gmt grdblend dem1.grd dem3.grd -Gdem_all.grd -V -R73.9/81.8/-70.3/-67.5 -I0.001/0.0005
+
+To see the info of .grd file, use:
+gmt grdinfo filename
+
+In the .SAFE directory, there is a file preview/map_overlay.kml, open it in google map:
+open *.kml
+
+Data downloading:
+https://vertex.daac.asf.alaska.edu/#
+get the csv file, find the link to .zip file
+wgetasf *.zip
+
+
+
+Process data:
+p2p_S1_TOPS_Frame.csh ref.SAFE ref.EOF rep.SAFE rep.EOF config.s1a.txt vv 1
+
+here vv means vertical polarization. We use hh for ice caps.
+To see different options, use p2p_S1_TOPS_Frame.csh
+
+1 means run in multiple cores.
+
+After getting the results, under directory F1/raw, there are two PRM files, use:
+SAT_baseline *.PRM
+To see the orbit information.
+
+
+To kill a process:
+ps -ax | grep gmt(or any key words)
+kill axis(the axis displayed last step)
+
+to unwrap phases, to go the merge directory
+snaphu.csh .1 0 xmin/xmax/ymin/ymax
+(see phase_filt.grd for the area that you are interested in)
+
+
+
+to change the unwrapped interferogram from radar coordinate to geographic coordinate:
+proj_ra2ll.csh trans.dat unwrap.grd unwrap_ll.grd
+
+  grep wave *PRM   % to see the wavelength (in meter)
+  gmt grdmath unwrap_ll.grd 2 PI MUL DIV -27.7329 MUL = los_ll.grd
+  gmt grdinfo los_ll.grd 
+  gmt makecpt -Cpolar -T-200/200/10 -Z -D > los.cptg
+  grd2kml.csh los_ll los.cpt 
+  open los_ll.kml
+
+ gmt grdcontour los_ll.grd  –C10 –Dmexico1516.txt
+gmt gmt2kml  mexico20152016.txt -Fl -W1p,white@75 > contours20152016.kml
+       open contours20152016.kml
+
+to compare InSAR LOS deformation time series with GPS time series:
+get the position of the GPS station: longitude(degree)/latitude(degree)/height(m) then calculate the LOS direction (East North Up). The last three parameters in look.txt is the LOS direction (East North Up) vector.
+go to the merge directory:
+       echo " -99.068 19.432 2226.590" | SAT_look S1_20150212_122529_F1.PRM > look_MMX1.txt
+
+
+to look at the value at a certain point (lon, lat):
+echo "-98.979000 19.484000" | gmt grdtrack -Glos_ll.grd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+another method to unwrap phase:
+change a parameter in the config.s1a.txt file:
+threshold_snaphu
+0 means wrapping phases, to make a comprise between processing time and accuracy, we can choose 0.1 here.
+
+
+To change the region to unwrap in radar coordinates, first open phasefilt.grd under the merge file and choose the location of xmin/xmax/ymin/ymax:
+ncview phasefilt.grd
+for the Amery ice shelf case, we use 0/36656/0/13057
+Mexico City: 44000/66000/3400/9600
+
+open the config.s1a.txt file and change the region_cut parameter to xmin/xmax/ymin/ymax
+
+
+
+
+
+To transform radar coordinates to geography ones, use:
+proj_ra2ll.csh
+
+
+To use computers at David’s lab:
+ssh geosat
+cd /Volumes/geosat/
+
+exit when finishing working
+
+
+
+find the 8m dem files in geosat:
+
+ssh geosat
+cd /palsar/DEM/REMA_8m
+then unzip the files:
+tar -xvf *.tar.gz
+I would be needing the *_DEM.gif
+
+
+To display disk usage statistics:
+du –sh
+
+
+geocode.csh 
+
+
+
+
+
+export PATH=$PATH:/usr/local/GMTSAR/bin
+
+
+
+
+
