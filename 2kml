@@ -1,0 +1,10 @@
+# .grd 2 .kml example
+grd2kml.csh los_ll los.cpt 
+open los_ll.kml
+
+
+# lon/lat coordinates to .kml example
+gmt gmt2kml track.xy -Fl -W3p,yellow@75  > track.kml
+open track.kml
+
+
