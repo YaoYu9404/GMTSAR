@@ -77,11 +77,8 @@ grdsample dem.grd -I0.001/0.0005 -Gtem.grd
 To merge two .grd files into one:
 gmt grdblend dem1.grd dem3.grd -Gdem_all.grd -V -R73.9/81.8/-70.3/-67.5 -I0.001/0.0005
 
-To see the info of .grd file, use:
-gmt grdinfo filename
 
-In the .SAFE directory, there is a file preview/map_overlay.kml, open it in google map:
-open *.kml
+
 
 Data downloading:
 https://vertex.daac.asf.alaska.edu/#
@@ -116,6 +113,7 @@ snaphu.csh .1 0 xmin/xmax/ymin/ymax
 to change the unwrapped interferogram from radar coordinate to geographic coordinate:
 proj_ra2ll.csh trans.dat unwrap.grd unwrap_ll.grd
 
+to project the unwrapped results in Google Earth:
   grep wave *PRM   % to see the wavelength (in meter)
   gmt grdmath unwrap_ll.grd 2 PI MUL DIV -27.7329 MUL = los_ll.grd
   gmt grdinfo los_ll.grd 
@@ -123,9 +121,10 @@ proj_ra2ll.csh trans.dat unwrap.grd unwrap_ll.grd
   grd2kml.csh los_ll los.cpt 
   open los_ll.kml
 
- gmt grdcontour los_ll.grd  –C10 –Dmexico1516.txt
+Make contours in .kml:
+gmt grdcontour los_ll.grd  –C10 –Dmexico1516.txt
 gmt gmt2kml  mexico20152016.txt -Fl -W1p,white@75 > contours20152016.kml
-       open contours20152016.kml
+open contours20152016.kml
 
 to compare InSAR LOS deformation time series with GPS time series:
 get the position of the GPS station: longitude(degree)/latitude(degree)/height(m) then calculate the LOS direction (East North Up). The last three parameters in look.txt is the LOS direction (East North Up) vector.
@@ -202,5 +201,19 @@ export PATH=$PATH:/usr/local/GMTSAR/bin
 
 
 
+
+to convert a .grd file to .kml (.png)
+grd2kml.csh file *.cpt
+
+Be careful that it basically works for a small region. To project a much larger region, for example the whole globe, we need to change
+some parameters (-Jx, DPI).
+
+We can also use grd2geotiff.csh. to creat a .tiff file (we need to change
+some parameters -Jx, DPI). 
+
+grd2geotiff.csh file *.cpt
+
+Then use image2qtree to creat .kml.
+/usr/local/StereoPipeline/bin/image2qtree -o grav_V27 /Volumes/geosat2/geotiff/grav_1min/*.tiff
 
 
