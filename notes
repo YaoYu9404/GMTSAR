@@ -213,7 +213,9 @@ some parameters -Jx, DPI).
 
 grd2geotiff.csh file *.cpt
 
-Then use image2qtree to creat .kml.
-/usr/local/StereoPipeline/bin/image2qtree -o grav_V27 /Volumes/geosat2/geotiff/grav_1min/*.tiff
+Then use image2qtree to creat .kml from .tiff
+/usr/local/StereoPipeline/bin/image2qtree -o new_directory *.tiff
+
+then look at the .kml under new_directory
 
 
