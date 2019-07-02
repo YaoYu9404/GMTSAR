@@ -238,7 +238,7 @@ Then use image2qtree to creat .kml from .tiff
 
 
 
-grdsample vari.grd -I0.033/0.02 -Gvari_sampled.grd
+nan_land.com # to make the land NAN and resample grd file.
 grd2geotiff_yy.csh vari_sampled vari.cpt
 /usr/local/StereoPipeline/bin/image2qtree -o vari_sampled_25_100 vari_sampled.tiff
 
