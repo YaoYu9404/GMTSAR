@@ -200,6 +200,10 @@ geocode.csh
 export PATH=$PATH:/usr/local/GMTSAR/bin
 
 
+after get the .grd file, resample it to make finer even fake resolution.
+grdsample *.grd -I / -Gnew.grd
+
+after trying the 25 km + case, the different wavenumber bands and use a grid size of about 7/5 minutes
 
 
 to convert a .grd file to .kml (.png)
@@ -219,5 +223,24 @@ Then use image2qtree to creat .kml from .tiff
 then look at the .kml under new_directory
 
 
-after get the .grd file, resample it to make finer even fake resolution.
-after trying the 25 km + case, the different wavenumber bands and use a grid size of about 7/5 minutes
+
+
+
+
+
+grd2geotiff.csh file *.cpt
+
+Then use image2qtree to creat .kml from .tiff
+/usr/local/StereoPipeline/bin/image2qtree -o new_directory *.tiff
+
+
+
+
+
+
+grdsample vari.grd -I0.033/0.02 -Gvari_sampled.grd
+grd2geotiff_yy.csh vari_sampled vari.cpt
+/usr/local/StereoPipeline/bin/image2qtree -o vari_sampled_25_100 vari_sampled.tiff
+
+
+
