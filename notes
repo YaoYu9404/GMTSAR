@@ -219,3 +219,5 @@ Then use image2qtree to creat .kml from .tiff
 then look at the .kml under new_directory
 
 
+after get the .grd file, resample it to make finer even fake resolution.
+after trying the 25 km + case, the different wavenumber bands and use a grid size of about 7/5 minutes
