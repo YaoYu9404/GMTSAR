@@ -83,7 +83,8 @@ gmt grdblend dem1.grd dem3.grd -Gdem_all.grd -V -R73.9/81.8/-70.3/-67.5 -I0.001/
 Data downloading:
 https://vertex.daac.asf.alaska.edu/#
 https://search.asf.alaska.edu/#/
-get the csv file, find the link to .zip file
+click "Queue", choose "SLC". After choosing all the scenes that you are interested in, go to "Download Queue", click metadata download,
+get the csv file, find the link to .zip file.
 wgetasf *.zip
 
 
