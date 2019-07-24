@@ -88,6 +88,9 @@ get the csv file, find the link to .zip file.
 wgetasf *.zip
 
 
+orbit downloading:
+https://qc.sentinel1.eo.esa.int/aux_poeorb/
+
 
 Process data:
 p2p_S1_TOPS_Frame.csh ref.SAFE ref.EOF rep.SAFE rep.EOF config.s1a.txt vv 1
