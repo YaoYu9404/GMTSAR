@@ -1,1 +1,7 @@
 note on grounding line
+on Ross Iceshelf
+
+dem.grd:
+make_dem.csh lonW lonE latS latN DEM_type
+make_dem.csh -162.5 -153 -78.66 -76.06 3
+and the we just need the file dem.grd, so delete all others.
