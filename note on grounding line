@@ -2,6 +2,8 @@ note on grounding line
 on Ross Iceshelf
 
 dem.grd:
-make_dem.csh lonW lonE latS latN DEM_type
-make_dem.csh -162.5 -153 -78.66 -76.06 3
-and the we just need the file dem.grd, so delete all others.
+make_dem.csh lonW lonE latS latN DEM_type -- not working
+https://topex.ucsd.edu/gmtsar/demgen/
+generate 3 .grd files and merge them together
+
+gmt grdblend dem1.grd dem2.grd dem3.grd -Gdem_all.grd -V -R-162.5/-153/-78.66/-76.06 -I0.001/0.0005
