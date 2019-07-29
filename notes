@@ -93,6 +93,9 @@ https://qc.sentinel1.eo.esa.int/aux_poeorb/
 
 dem downloading:
 https://topex.ucsd.edu/gmtsar/demgen/
+when looking at polar regions, a single SLC scence may exceed 4 degrees. Using the SRTM15+V2.nc dem:
+https://topex.ucsd.edu/WWW_html/srtm15_plus.html
+gmt grdcut SRTM15+V2.nc -Gdem.grd -R<west>/<east>/<south>/<north>
 
 
 Process data:
